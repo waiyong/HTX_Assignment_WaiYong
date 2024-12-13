@@ -1,0 +1,8 @@
+fastapi==0.115.6 
+uvicorn==0.32.1 
+torch==2.5.1  # Match the version used in training
+torchvision==0.20.1  # Match the version used in training
+Pillow==11.0.0 
+numpy==1.26.4
+python-multipart
+ipywidgets

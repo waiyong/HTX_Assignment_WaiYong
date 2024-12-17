@@ -136,10 +136,17 @@ Use the /predict/ endpoint to upload an image for classification.
 
 # Results
     
-| Model Architecture | Frozen Layers      | Optimizer | Learning Rate | Weight Decay | Batch Size | Image Augmentation | Dropout Rate | Best Train Accuracy | Best Val Accuracy | Best Train Loss | Best Validation Loss |
-|---------------------|--------------------|-----------|---------------|--------------|------------|--------------------|--------------|---------------------|-------------------|----------------|-----------------------|
-| ResNet-18          | Layer1 - Layer3    | Adam      | 0.001         | 1e-4         | 32         | Yes                | 0.5          | 90.2%               | 85.6%            | 0.254          | 0.335                 |
-| ResNet-18          | Layer1 - Layer3    | Adam      | 0.0005        | 1e-5         | 32         | No                 | 0            | 88.5%               | 83.2%            | 0.302          | 0.412                 |
-| ResNet-18          | Layer1 - Layer4    | SGD       | 0.01          | 1e-3         | 64         | Yes                | 0.3          | 92.0%               | 87.0%            | 
-
+| Model Architecture   | Frozen Layers        | Optimizer | Learning Rate | Weight Decay | Batch Size | Image Augmentation              | Dropout Rate | Best Train Accuracy | Best Val Accuracy | Best Train Loss | Best Validation Loss |
+|-----------------------|----------------------|-----------|---------------|--------------|------------|---------------------------------|--------------|----------------------|-------------------|----------------|-----------------------|
+| Resnet-18            | All                  | Adam      | 0.001         | -            | 32         | No                              | 0            | 83.2                | 36.9              | 0.827          | 2.78                 |
+| Resnet-18            | All                  | Adam      | 0.001         | -            | 32         | No                              | 0.3          | 51.6                | 36.1              | 1.89           | 2.78                 |
+| Resnet-18            | All                  | Adam      | 0.001         | -            | 32         | No                              | 0.5          | 31.8                | 33.6              | 2.9            | 2.89                 |
+| Resnet-18            | All                  | Adam      | 0.001         | -            | 32         | Yes                             | 0            | 36.8                | 40                | 2.76           | 2.46                 |
+| Resnet-18            | All                  | Adam      | 0.001         | -            | 32         | Yes                             | 0.3          | 19.2                | 31.2              | 3.78           | 3.00                 |
+| Resnet-18            | Unfreeze layer 4     | Adam      | 0.001         | -            | 32         | Yes                             | 0            | 77.4                | 77                | 0.814          | 0.85                 |
+| Resnet-18            | Unfreeze layer 4     | Adam      | 0.001         | -            | 32         | Yes                             | 0.3          | 75.2                | 78.2              | 0.893          | 0.816                |
+| Resnet-18            | Unfreeze layer 4     | Adam      | 0.001         | 0.00001      | 32         | Yes                             | 0            | 73.1                | 75.8              | 0.974          | 0.862                |
+| Resnet-18            | Unfreeze layer 4     | Adam      | 0.001         | 0.0001       | 32         | Yes                             | 0            | 74.2                | 75.5              | 0.941          | 0.896                |
+| Resnet-18            | Unfreeze layer 4     | Adam      | 0.001         | 0.001        | 32         | Yes                             | 0            | 62.3                | 69.4              | 1.47           | 1.08                 |
+| Resnet-18            | Unfreeze layer 4     | Adam      | 0.001         | -            | 32         | Yes + License Plate Blur        | 0            | 78.1                | 76.6              | 0.793          | 0.878                |
 

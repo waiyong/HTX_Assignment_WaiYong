@@ -108,14 +108,14 @@ If the command fails, they need to start Docker. On macOS or Windows, this typic
 
 # Training the Model
 
-Ensure the dataset is in the correct directory structure (see Dataset).
-Run the Jupyter Notebook for training:
-jupyter notebook notebooks/train_model.ipynb
-Key steps in the notebook:
-Data loading and preprocessing
-Model fine-tuning with ResNet18
-Experiment tracking with MLflow
-Evaluation (confusion matrix, precision/recall)
+1. Ensure the dataset is in the correct directory structure (see Dataset).
+2. Run the Jupyter Notebook for training:
+3. jupyter notebook notebooks/train_model.ipynb
+4. Key steps in the notebook:
+    - Data loading and preprocessing
+    - Model fine-tuning with ResNet18
+    - Experiment tracking with MLflow
+    - Evaluation (confusion matrix, precision/recall)
 
 # Running the API
 

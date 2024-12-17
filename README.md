@@ -135,6 +135,10 @@ This opens the Swagger UI where you can interact with the API.
 Use the /predict/ endpoint to upload an image for classification.
 
 # Results
+
+"Earlier experiments were conducted using a train-test split as the dataset sourced online had train and test set only. However, towards the end of the project duration, I realised this oversight, and I redid the data processing pipeline to use train-validation-test split. The final model used a proper train-validation-test split, ensuring more robust evaluation and generalization of the model's performance. The results in Table 2 reflect the most reliable metrics for comparison."
+
+**Table 1: Results for experiments using train-test split**
     
 | Model Architecture   | Frozen Layers        | Optimizer | Learning Rate | Weight Decay | Batch Size | Image Augmentation              | Dropout Rate | Best Train Accuracy | Best Val Accuracy | Best Train Loss | Best Validation Loss |
 |-----------------------|----------------------|-----------|---------------|--------------|------------|---------------------------------|--------------|----------------------|-------------------|----------------|-----------------------|
@@ -150,3 +154,35 @@ Use the /predict/ endpoint to upload an image for classification.
 | Resnet-18            | Unfreeze layer 4     | Adam      | 0.001         | 0.001        | 32         | Yes                             | 0            | 62.3                | 69.4              | 1.47           | 1.08                 |
 | Resnet-18            | Unfreeze layer 4     | Adam      | 0.001         | -            | 32         | Yes + License Plate Blur        | 0            | 78.1                | 76.6              | 0.793          | 0.878                |
 
+
+
+## Table 2: Results with Train-Validation-Test Split
+
+| **Model Architecture** | **Frozen Layers** | **Optimizer**                                                                 | **Learning Rate**                                                                                          | **Weight Decay** | **Batch Size** | **Image Augmentation** | **Dropout Rate** | **Best Train Accuracy** | **Best Val Accuracy** | **Best Test Accuracy** | **Best Train Loss** | **Best Validation Loss** | **Best Test Loss** |
+|-------------------------|-------------------|------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|------------------|---------------|------------------------|-----------------|-------------------------|-----------------------|------------------------|--------------------|-------------------------|--------------------|
+| ResNet-18              | Unfreeze layer 4  | Adam                                                                         | 0.001                                                                                                     | -                | 32            | Yes                    | 0               | 78.1%                   | 75.4%                | 75.8%                 | 0.799              | 0.91                    | 0.943              |
+| ResNet-18              | Unfreeze layer 4  | Adam                                                                         | 0.001 with ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2, verbose=True)                | -                | 32            | Yes                    | 0               | 80%                     | 79%                  | 78%                   | 0.724              | 0.795                   | 0.853              |
+
+## Key Insights and Takeaways
+Starting Point: Freezing all layers in Resnet-18 except the classification head (FC Layer), Learning Rate of 0.001, Adam optimizer and no dropout. Result: High Training Accuracy (Low Training Loss), but Training accuracy plateaued early (High Training Loss).
+
+Subsequent Experiments:
+- List of  changes made (Dropout rate, unfreezing layer 4, image augmentation, weight decay, ReduceLROnPlateau)
+
+### Experiment Summary and Insights
+
+| **Experiment**                                      | **Change Made**                          | **Reason**                                                | **Insight**                                                                 |
+|-----------------------------------------------------|-----------------------------------------|----------------------------------------------------------|-----------------------------------------------------------------------------|
+| **Baseline (Freeze Inner Layer, Train FC layer)**   | All layers frozen, no dropout           | Set Baseline                                             | Overfitting observed with high training accuracy and low generalization.    |
+| **Experiment Group 2**                                    | Added dropout                           | Regularization technique to reduce overfitting           | Overfitting reduced (train-validation loss gap narrowed), but overall performance remained poor. |
+| **Experiment Group 3**                                    | Enabled image augmentation              | Improve generalization                                   | Overfitting largely eliminated; however, both train and validation loss remained high, and accuracy was still unsatisfactory. |
+| **Experiment Group 4**                                    | Unfroze layer 4                         | Allow feature extraction tuning                         | Significant improvement observed; model's discriminative power increased.  |
+| **Experiment Group 5**                                    | Added weight decay (1e-4)               | Regularization to stabilize the model                   | Minimal impact observed, likely due to effective image augmentation already in place. |
+| **Experiment Group 6**                                    | License plate blur augmentation         | Simulate real-world scenarios                           | No significant impact on model performance results.                         |
+
+
+## Best-Performing Experiment
+
+
+## Future Improvements 
+Given more time, I would ex

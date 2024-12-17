@@ -136,5 +136,10 @@ Use the /predict/ endpoint to upload an image for classification.
 
 # Results
     
-## Model and Dataset
+| Model Architecture | Frozen Layers      | Optimizer | Learning Rate | Weight Decay | Batch Size | Image Augmentation | Dropout Rate | Best Train Accuracy | Best Val Accuracy | Best Train Loss | Best Validation Loss |
+|---------------------|--------------------|-----------|---------------|--------------|------------|--------------------|--------------|---------------------|-------------------|----------------|-----------------------|
+| ResNet-18          | Layer1 - Layer3    | Adam      | 0.001         | 1e-4         | 32         | Yes                | 0.5          | 90.2%               | 85.6%            | 0.254          | 0.335                 |
+| ResNet-18          | Layer1 - Layer3    | Adam      | 0.0005        | 1e-5         | 32         | No                 | 0            | 88.5%               | 83.2%            | 0.302          | 0.412                 |
+| ResNet-18          | Layer1 - Layer4    | SGD       | 0.01          | 1e-3         | 64         | Yes                | 0.3          | 92.0%               | 87.0%            | 
+
 

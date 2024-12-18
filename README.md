@@ -5,6 +5,7 @@
 
 In line with **HTX's mission to harness cutting-edge technologies for safeguarding Singapore**, this project delivers a **computer vision solution** to accurately classify vehicle types from images. Designed for **Home Team departments** such as the **Singapore Police Force** and the **Immigration and Checkpoints Authority**, it enhances surveillance, traffic management, and security operations.
 
+This solution will enhance real-time vehicle identification capabilities, improving surveillance and border control efficiency.
 ---
 
 ## Key Features
@@ -125,18 +126,51 @@ If the command fails, they need to start Docker. On macOS or Windows, this typic
 
 1. Build and run the Docker container
 
-```base
+```bash
     docker build -t stanford-cars-api .
     docker run -p 8000:8000 stanford-cars-api
 ```
 
 2. Open your browser and navigate to:
 
-```base
+```bash
     http://localhost:8000/docs
 ```
 This opens the Swagger UI where you can interact with the API.
 Use the /predict/ endpoint to upload an image for classification.
+
+3. How you can call `/predict/` endpoint using Python
+
+```bash
+import requests
+
+# Define the endpoint and the image path
+url = "http://localhost:8000/predict/"
+image_path = "path_to_your_image.jpg"
+
+# Open the image file in binary mode
+with open(image_path, "rb") as image_file:
+    # Prepare the files payload
+    files = {"file": image_file}
+    
+    # Send the POST request
+    response = requests.post(url, files=files)
+
+# Print the response
+if response.status_code == 200:
+    print("Predicted class:", response.json().get("predicted_class"))
+else:
+    print("Error:", response.status_code, response.json())
+```
+
+4.. How you can call `/predict/` endpoint using `curl`
+
+```bash
+curl -X POST "http://localhost:8000/predict/" \
+     -H "accept: application/json" \
+     -H "Content-Type: multipart/form-data" \
+     -F "file=@path_to_your_image.jpg"
+```
 
 # Results
 
@@ -146,17 +180,17 @@ Use the /predict/ endpoint to upload an image for classification.
     
 | Model Architecture   | Frozen Layers        | Optimizer | Learning Rate | Weight Decay | Batch Size | Image Augmentation              | Dropout Rate | Best Train Accuracy | Best Val Accuracy | Best Train Loss | Best Validation Loss |
 |-----------------------|----------------------|-----------|---------------|--------------|------------|---------------------------------|--------------|----------------------|-------------------|----------------|-----------------------|
-| Resnet-18            | All                  | Adam      | 0.001         | -            | 32         | No                              | 0            | 83.2                | 36.9              | 0.827          | 2.78                 |
-| Resnet-18            | All                  | Adam      | 0.001         | -            | 32         | No                              | 0.3          | 51.6                | 36.1              | 1.89           | 2.78                 |
-| Resnet-18            | All                  | Adam      | 0.001         | -            | 32         | No                              | 0.5          | 31.8                | 33.6              | 2.9            | 2.89                 |
-| Resnet-18            | All                  | Adam      | 0.001         | -            | 32         | Yes                             | 0            | 36.8                | 40                | 2.76           | 2.46                 |
-| Resnet-18            | All                  | Adam      | 0.001         | -            | 32         | Yes                             | 0.3          | 19.2                | 31.2              | 3.78           | 3.00                 |
-| Resnet-18            | Unfreeze layer 4     | Adam      | 0.001         | -            | 32         | Yes                             | 0            | 77.4                | 77                | 0.814          | 0.85                 |
-| Resnet-18            | Unfreeze layer 4     | Adam      | 0.001         | -            | 32         | Yes                             | 0.3          | 75.2                | 78.2              | 0.893          | 0.816                |
-| Resnet-18            | Unfreeze layer 4     | Adam      | 0.001         | 0.00001      | 32         | Yes                             | 0            | 73.1                | 75.8              | 0.974          | 0.862                |
-| Resnet-18            | Unfreeze layer 4     | Adam      | 0.001         | 0.0001       | 32         | Yes                             | 0            | 74.2                | 75.5              | 0.941          | 0.896                |
-| Resnet-18            | Unfreeze layer 4     | Adam      | 0.001         | 0.001        | 32         | Yes                             | 0            | 62.3                | 69.4              | 1.47           | 1.08                 |
-| Resnet-18            | Unfreeze layer 4     | Adam      | 0.001         | -            | 32         | Yes + License Plate Blur        | 0            | 78.1                | 76.6              | 0.793          | 0.878                |
+| ResNet-18            | All                  | Adam      | 0.001         | -            | 32         | No                              | 0            | 83.2                | 36.9              | 0.827          | 2.78                 |
+| ResNet-18            | All                  | Adam      | 0.001         | -            | 32         | No                              | 0.3          | 51.6                | 36.1              | 1.89           | 2.78                 |
+| ResNet-18            | All                  | Adam      | 0.001         | -            | 32         | No                              | 0.5          | 31.8                | 33.6              | 2.9            | 2.89                 |
+| ResNet-18            | All                  | Adam      | 0.001         | -            | 32         | Yes                             | 0            | 36.8                | 40                | 2.76           | 2.46                 |
+| ResNet-18            | All                  | Adam      | 0.001         | -            | 32         | Yes                             | 0.3          | 19.2                | 31.2              | 3.78           | 3.00                 |
+| ResNet-18            | Unfreeze layer 4     | Adam      | 0.001         | -            | 32         | Yes                             | 0            | 77.4                | 77                | 0.814          | 0.85                 |
+| ResNet-18            | Unfreeze layer 4     | Adam      | 0.001         | -            | 32         | Yes                             | 0.3          | 75.2                | 78.2              | 0.893          | 0.816                |
+| ResNet-18            | Unfreeze layer 4     | Adam      | 0.001         | 0.00001      | 32         | Yes                             | 0            | 73.1                | 75.8              | 0.974          | 0.862                |
+| ResNet-18            | Unfreeze layer 4     | Adam      | 0.001         | 0.0001       | 32         | Yes                             | 0            | 74.2                | 75.5              | 0.941          | 0.896                |
+| ResNet-18            | Unfreeze layer 4     | Adam      | 0.001         | 0.001        | 32         | Yes                             | 0            | 62.3                | 69.4              | 1.47           | 1.08                 |
+| ResNet-18            | Unfreeze layer 4     | Adam      | 0.001         | -            | 32         | Yes + License Plate Blur        | 0            | 78.1                | 76.6              | 0.793          | 0.878                |
 
 
 
@@ -168,7 +202,7 @@ Use the /predict/ endpoint to upload an image for classification.
 | ResNet-18              | Unfreeze layer 4  | Adam                                                                         | 0.001 with ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2, verbose=True)                | -                | 32            | Yes                    | 0               | 80%                     | 79%                  | 78%                   | 0.724              | 0.795                   | 0.853              |
 
 # Key Insights and Takeaways
-Starting Point: Freezing all layers in Resnet-18 except the classification head (FC Layer), Learning Rate of 0.001, Adam optimizer and no dropout. Result: High Training Accuracy (Low Training Loss), but Training accuracy plateaued early (High Training Loss).
+Starting Point: Freezing all layers in ResNet-18 except the classification head (FC Layer), Learning Rate of 0.001, Adam optimizer and no dropout. Result: High Training Accuracy (Low Training Loss), but Training accuracy plateaued early (High Training Loss).
 
 Subsequent Experiments:
 - List of  changes made (Dropout rate, unfreezing layer 4, image augmentation, weight decay, ReduceLROnPlateau)
@@ -192,23 +226,37 @@ The best-performing model in the experiments was ResNet-18 with layer 4 unfrozen
 
 ### Visual Similarity Among Audi Models
 
-| **Audi TTS Coupe 2012**                        | **Audi TT RS Coupe 2012**                    | **Audi A5 Coupe 2012**                      |
-|------------------------------------------------|---------------------------------------------|---------------------------------------------|
-| ![TTS](data/output/Audi_TTS_Coupe_2012_sample_1.png) | ![TT RS](data/output/Audi_TT_RS_Coupe_2012_sample_5.png) | ![A5](data/output/Audi_A5_Coupe_2012_sample_4.png) |
-| ![TTS](data/output/Audi_TTS_Coupe_2012_sample_5.png) | ![TT RS](data/output/Audi_TT_RS_Coupe_2012_sample_3.png) | ![A5](data/output/Audi_A5_Coupe_2012_sample_3.png) |
+**Misclassification from Confusion Matrix**
+Computed the frequency table of misclassification amongst Audi Cars. Table below shows some samples:
+
+| True Label         | Predicted Label      | Count |
+|---------------------|----------------------|-------|
+| Audi A5 Coupe 2012 | Audi S5 Coupe 2012   | 14    |
+| Audi TT Hatchback 2011 | Audi TTS Coupe 2012 | 10    |
+| Audi TT RS Coupe 2012 | Audi TTS Coupe 2012 | 8     |
+| Audi A5 Coupe 2012 | Audi TTS Coupe 2012  | 3     |
 
 
-The Audi TTS and RS share the same body kit, with the Audi TT RS having a spoiler. 
 
-**Audi TTS Coupe 2012**: Due to the high visual similarity, the Precision, Recall and F1 score for  are very poor. 
+| **Audi TTS Coupe 2012**                        | **Audi TT RS Coupe 2012**                    | **Audi A5 Coupe 2012**                      | **Audi S5 Coupe 2012**                      |
+|------------------------------------------------|---------------------------------------------|---------------------------------------------|---------------------------------------------|
+| ![TTS](data/output/Audi_TTS_Coupe_2012_sample_1.png) | ![TT RS](data/output/Audi_TT_RS_Coupe_2012_sample_5.png) | ![A5](data/output/Audi_A5_Coupe_2012_sample_4.png) | ![S5](data/output/Audi_S5_Coupe_2012_sample_1.png) |
+| ![TTS](data/output/Audi_TTS_Coupe_2012_sample_5.png) | ![TT RS](data/output/Audi_TT_RS_Coupe_2012_sample_3.png) | ![A5](data/output/Audi_A5_Coupe_2012_sample_3.png) | ![S5](data/output/Audi_S5_Coupe_2012_sample_3.png) |
 
-**Audi TT RS Coupe 2012**: The precision is very high, but the Recall is poor. The hypothesis is that if the image shows Audi TT RS with the spoiler, the model can classify correctly, but if it shows the car at other angles, it will miss it completely as it looks similar to the other Audi models
 
-**Audi A5 Coupe 2012** The same goes with Audi A5 Coupe 2012, with the only visual difference i can spot being the design of the front grille.
+
+## Some Commentary
+
+**Audi TTS Coupe 2012 and Audi TT RS Coupe 2012**: The Audi TTS and RS share the same body kit, with the Audi TT RS having a spoiler. Due to the high visual similarity, the Precision, Recall and F1 score for are very poor with Audi TTS. 
+
+The precision is very high for Audi TT RS, but the Recall is poor. The hypothesis is that if the image shows Audi TT RS with the spoiler, the model can classify correctly, but if it shows the car at other angles, it will miss it completely as it looks similar to the other Audi models like the Audi TTS.
+
+**Audi A5 Coupe 2012 and Audi S5 Coupe 2012** The same goes with Audi A5 Coupe 2012 and Audi S5 Coupe 2012, with the only visual difference i can spot being the design of the front grille, bumpers or rims which are very small
+
 
 ## Future Improvements 
 Given more time, I would explore alternative methods such as: 
-- Using Deeper Architectures (Resnet 50)
+- Using Deeper Architectures (ResNet 50)
 - Use techniques like Grad-CAM to understand which features the model is focusing on and refine the dataset or augmentations to include underrepresented aspects.
 - Explore augmenting the training set with more diverse images from varying angles and lighting conditions 
-    - Example: For the Uadi TTS Coupe 2012 and Audi A5 Coup 2012, most of the images were taken from the front only.
+    - Example: For the Audi TTS Coupe 2012 and Audi A5 Coup 2012, most of the images were taken from the front only.

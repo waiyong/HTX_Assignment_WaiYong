@@ -192,11 +192,11 @@ The best-performing model in the experiments was ResNet-18 with layer 4 unfrozen
 
 ### Visual Similarity Among Audi Models
 
-| Audi TTS Coupe 2012 | Audi TT RS Coupe 2012 | Audi A5 Coupe 2012 |
-|----------------------|-----------------------|--------------------|
+| **Audi TTS Coupe 2012**                        | **Audi TT RS Coupe 2012**                    | **Audi A5 Coupe 2012**                      |
+|------------------------------------------------|---------------------------------------------|---------------------------------------------|
 | ![TTS](data/output/Audi_TTS_Coupe_2012_sample_1.png) | ![TT RS](data/output/Audi_TT_RS_Coupe_2012_sample_5.png) | ![A5](data/output/Audi_A5_Coupe_2012_sample_4.png) |
-
 | ![TTS](data/output/Audi_TTS_Coupe_2012_sample_5.png) | ![TT RS](data/output/Audi_TT_RS_Coupe_2012_sample_3.png) | ![A5](data/output/Audi_A5_Coupe_2012_sample_3.png) |
+
 
 The Audi TTS and RS share the same body kit, with the Audi TT RS having a spoiler. 
 

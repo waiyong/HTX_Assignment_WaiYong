@@ -171,6 +171,8 @@ Subsequent Experiments:
 
 ### Experiment Summary and Insights
 
+### Experiment Summary and Insights
+
 | **Experiment**                                      | **Change Made**                          | **Reason**                                                | **Insight**                                                                 |
 |-----------------------------------------------------|-----------------------------------------|----------------------------------------------------------|-----------------------------------------------------------------------------|
 | **Baseline (Freeze Inner Layer, Train FC layer)**   | All layers frozen, no dropout           | Set Baseline                                             | Overfitting observed with high training accuracy and low generalization.    |
@@ -179,10 +181,25 @@ Subsequent Experiments:
 | **Experiment Group 4**                                    | Unfroze layer 4                         | Allow feature extraction tuning                         | Significant improvement observed; model's discriminative power increased.  |
 | **Experiment Group 5**                                    | Added weight decay (1e-4)               | Regularization to stabilize the model                   | Minimal impact observed, likely due to effective image augmentation already in place. |
 | **Experiment Group 6**                                    | License plate blur augmentation         | Simulate real-world scenarios                           | No significant impact on model performance results.                         |
+| **Experiment Group 7**                                    | Applied ReduceLROnPlateau (factor=0.5)  | Dynamically adjust learning rate to improve convergence | Validation loss plateaued in earlier epochs; dynamically reducing the learning rate helped achieve better optimization and improved performance. |
 
 
 ## Best-Performing Experiment
+The best-performing model in the experiments was ResNet-18 with layer 4 unfrozen and trained using the Adam optimizer at a learning rate of 0.001 combined with ReduceLROnPlateau (factor=0.5, patience=2). This configuration, along with image augmentation and no dropout rate, achieved a train accuracy of 80%, validation accuracy of 79%, and test accuracy of 78%, with a train loss of 0.724, validation loss of 0.795, and test loss of 0.853.
 
+
+### Visual Similarity Among Audi Models
+
+| Audi TTS Coupe 2012 | Audi TT RS Coupe 2012 | Audi A5 Coupe 2012 |
+|----------------------|-----------------------|--------------------|
+| ![TTS](data/output/Audi_TTS_Coupe_2012_sample_1.png) | ![TT RS](data/output/Audi_TT_RS_Coupe_2012_sample_5.png) | ![A5](data/output/Audi_A5_Coupe_2012_sample_4.png) |
+
+The Audi TTS and RS share the same body kit, with the Audi TT RS having a spoiler. Due to the high visual similarity, the Precision, Recall and F1 score for Audi TTS are very poor. For the Audi TT RS, the precision is very high, but the Recall is poor. The hypothesis iss if the image shows Audi TT RS with the spoiler, it can classify correctly, but if it shows the car at other angles, it will miss it completely.
+
+The same goes with Audi A5 Coupe 2012, with the only visual difference i can spot being the design of the front grille.
 
 ## Future Improvements 
-Given more time, I would ex
+Given more time, I would explore alternative methods such as: 
+- Using Deeper Architectures (Resnet 50)
+- Use techniques like Grad-CAM to understand which features the model is focusing on and refine the dataset or augmentations to include underrepresented aspects.
+- Explore augmenting the training set with more diverse images from varying angles and lighting conditions (Visual Similarity Among Audi Models).

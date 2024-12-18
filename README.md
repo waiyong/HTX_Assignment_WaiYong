@@ -244,6 +244,12 @@ Computed the frequency table of misclassification amongst Audi Cars. Table below
 | ![TTS](data/output/Audi_TTS_Coupe_2012_sample_5.png) | ![TT RS](data/output/Audi_TT_RS_Coupe_2012_sample_3.png) | ![A5](data/output/Audi_A5_Coupe_2012_sample_3.png) | ![S5](data/output/Audi_S5_Coupe_2012_sample_3.png) |
 
 
+| **Audi TTS Coupe 2012**                        | **Audi TT RS Coupe 2012**                    | **Audi A5 Coupe 2012**                      | **Audi S5 Coupe 2012**                      |
+|------------------------------------------------|---------------------------------------------|---------------------------------------------|---------------------------------------------|
+| <img src="data/output/Audi_TTS_Coupe_2012_sample_1.png" width="200"/> | <img src="data/output/Audi_TT_RS_Coupe_2012_sample_5.png" width="200"/> | <img src="data/output/Audi_A5_Coupe_2012_sample_4.png" width="200"/> | <img src="data/output/Audi_S5_Coupe_2012_sample_1.png" width="200"/> |
+| <img src="data/output/Audi_TTS_Coupe_2012_sample_5.png" width="200"/> | <img src="data/output/Audi_TT_RS_Coupe_2012_sample_3.png" width="200"/> | <img src="data/output/Audi_A5_Coupe_2012_sample_3.png" width="200"/> | <img src="data/output/Audi_S5_Coupe_2012_sample_3.png" width="200"/> |
+
+
 
 ## Some Commentary
 

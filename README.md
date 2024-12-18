@@ -45,6 +45,10 @@ Metadata: Includes class names and bounding box coordinates for each image.
 Classes: 196 distinct car models, ranging from sedans to SUVs, annotated with specific makes and models.
 Image Resolution: High-resolution images, varying in size, with diverse backgrounds and lighting conditions.
 
+**Assumptions Made**
+Definition of "Car Type"
+The term "car type" in the requirements has been interpreted to mean the full car make, model, and year (e.g., "Audi TTS Coupe 2012") rather than broad categories like "sedan," "convertible," or "hatchback." This assumption was made based on the use of the Stanford Cars Dataset, which provides highly granular labels for specific car models
+
 - **Dataset Source (Images):** 
 [Stanford Cars Dataset Images](https://www.kaggle.com/datasets/jessicali9530/stanford-cars-dataset?resource=download)
 - **Dataset Source (Annotations):** [Stanford Cars Dataset Annotation] (https://www.kaggle.com/code/subhangaupadhaya/pytorch-stanfordcars-classification/input?select=cars_test_annos_withlabels+%281%29.mat)
@@ -156,20 +160,18 @@ Use the /predict/ endpoint to upload an image for classification.
 
 
 
-## Table 2: Results with Train-Validation-Test Split
+**Table 2: Results with Train-Validation-Test Split**
 
 | **Model Architecture** | **Frozen Layers** | **Optimizer**                                                                 | **Learning Rate**                                                                                          | **Weight Decay** | **Batch Size** | **Image Augmentation** | **Dropout Rate** | **Best Train Accuracy** | **Best Val Accuracy** | **Best Test Accuracy** | **Best Train Loss** | **Best Validation Loss** | **Best Test Loss** |
 |-------------------------|-------------------|------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|------------------|---------------|------------------------|-----------------|-------------------------|-----------------------|------------------------|--------------------|-------------------------|--------------------|
 | ResNet-18              | Unfreeze layer 4  | Adam                                                                         | 0.001                                                                                                     | -                | 32            | Yes                    | 0               | 78.1%                   | 75.4%                | 75.8%                 | 0.799              | 0.91                    | 0.943              |
 | ResNet-18              | Unfreeze layer 4  | Adam                                                                         | 0.001 with ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2, verbose=True)                | -                | 32            | Yes                    | 0               | 80%                     | 79%                  | 78%                   | 0.724              | 0.795                   | 0.853              |
 
-## Key Insights and Takeaways
+# Key Insights and Takeaways
 Starting Point: Freezing all layers in Resnet-18 except the classification head (FC Layer), Learning Rate of 0.001, Adam optimizer and no dropout. Result: High Training Accuracy (Low Training Loss), but Training accuracy plateaued early (High Training Loss).
 
 Subsequent Experiments:
 - List of  changes made (Dropout rate, unfreezing layer 4, image augmentation, weight decay, ReduceLROnPlateau)
-
-### Experiment Summary and Insights
 
 ### Experiment Summary and Insights
 
@@ -184,7 +186,7 @@ Subsequent Experiments:
 | **Experiment Group 7**                                    | Applied ReduceLROnPlateau (factor=0.5)  | Dynamically adjust learning rate to improve convergence | Validation loss plateaued in earlier epochs; dynamically reducing the learning rate helped achieve better optimization and improved performance. |
 
 
-## Best-Performing Experiment
+### Best-Performing Experiment
 The best-performing model in the experiments was ResNet-18 with layer 4 unfrozen and trained using the Adam optimizer at a learning rate of 0.001 combined with ReduceLROnPlateau (factor=0.5, patience=2). This configuration, along with image augmentation and no dropout rate, achieved a train accuracy of 80%, validation accuracy of 79%, and test accuracy of 78%, with a train loss of 0.724, validation loss of 0.795, and test loss of 0.853.
 
 
@@ -194,12 +196,19 @@ The best-performing model in the experiments was ResNet-18 with layer 4 unfrozen
 |----------------------|-----------------------|--------------------|
 | ![TTS](data/output/Audi_TTS_Coupe_2012_sample_1.png) | ![TT RS](data/output/Audi_TT_RS_Coupe_2012_sample_5.png) | ![A5](data/output/Audi_A5_Coupe_2012_sample_4.png) |
 
-The Audi TTS and RS share the same body kit, with the Audi TT RS having a spoiler. Due to the high visual similarity, the Precision, Recall and F1 score for Audi TTS are very poor. For the Audi TT RS, the precision is very high, but the Recall is poor. The hypothesis iss if the image shows Audi TT RS with the spoiler, it can classify correctly, but if it shows the car at other angles, it will miss it completely.
+| ![TTS](data/output/Audi_TTS_Coupe_2012_sample_5.png) | ![TT RS](data/output/Audi_TT_RS_Coupe_2012_sample_3.png) | ![A5](data/output/Audi_A5_Coupe_2012_sample_3.png) |
 
-The same goes with Audi A5 Coupe 2012, with the only visual difference i can spot being the design of the front grille.
+The Audi TTS and RS share the same body kit, with the Audi TT RS having a spoiler. 
+
+**Audi TTS Coupe 2012**: Due to the high visual similarity, the Precision, Recall and F1 score for  are very poor. 
+
+**Audi TT RS Coupe 2012**: The precision is very high, but the Recall is poor. The hypothesis is that if the image shows Audi TT RS with the spoiler, the model can classify correctly, but if it shows the car at other angles, it will miss it completely as it looks similar to the other Audi models
+
+**Audi A5 Coupe 2012** The same goes with Audi A5 Coupe 2012, with the only visual difference i can spot being the design of the front grille.
 
 ## Future Improvements 
 Given more time, I would explore alternative methods such as: 
 - Using Deeper Architectures (Resnet 50)
 - Use techniques like Grad-CAM to understand which features the model is focusing on and refine the dataset or augmentations to include underrepresented aspects.
-- Explore augmenting the training set with more diverse images from varying angles and lighting conditions (Visual Similarity Among Audi Models).
+- Explore augmenting the training set with more diverse images from varying angles and lighting conditions 
+    - Example: For the Uadi TTS Coupe 2012 and Audi A5 Coup 2012, most of the images were taken from the front only.

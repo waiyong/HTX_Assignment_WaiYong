@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image
 
 def detect_and_blur_license_plate(image: np.ndarray) -> np.ndarray:
     """
@@ -50,3 +52,54 @@ def parse_annotations(annotations):
         file_names.append(file_name)
 
     return np.array(bounding_boxes), np.array(class_labels), np.array(file_names)
+
+
+# Function to crop and save images
+def crop_and_save_images(file_names, bounding_boxes, source_dir, target_dir):
+    """
+    Crop and save images if they don't already exist.
+
+    Args:
+        file_names (list): List of image file names.
+        bounding_boxes (list): List of bounding boxes (x1, y1, x2, y2).
+        source_dir (Path): Path to the source directory containing raw images.
+        target_dir (Path): Path to save the cropped images.
+    """
+    target_dir.mkdir(parents=True, exist_ok=True)  # Ensure target directory exists
+
+    # Check if images already exist
+    if len(list(target_dir.glob("*.jpg"))) == len(file_names):
+        print(f"Images already cropped and saved in {target_dir}. Skipping cropping.")
+        return
+
+    print(f"Cropping and saving images to {target_dir}...")
+    for i, bbox in tqdm(enumerate(bounding_boxes), total=len(bounding_boxes)):
+        file_name = file_names[i]
+        x1, y1, x2, y2 = bbox
+
+        # Load image
+        img_path = source_dir / file_name
+        if not img_path.exists():
+            print(f"Warning: {img_path} does not exist. Skipping.")
+            continue
+
+        # Crop and save the image
+        with Image.open(img_path) as img:
+            cropped_img = img.crop((x1, y1, x2, y2))
+            cropped_img.save(target_dir / file_name)
+
+    print(f"Cropping completed. Images saved to {target_dir}.")
+
+
+# Function to display a few cropped images for verification
+def display_cropped_images(cropped_dir, num_images=5):
+    cropped_files = list(cropped_dir.iterdir())[:num_images]
+    plt.figure(figsize=(10, 5))
+    for i, file_path in enumerate(cropped_files):
+        img = Image.open(file_path)
+        plt.subplot(1, num_images, i + 1)
+        plt.imshow(img)
+        plt.title(f"Cropped: {file_path.name}", fontsize=10)
+        plt.axis('off')
+    plt.tight_layout()
+    plt.show()

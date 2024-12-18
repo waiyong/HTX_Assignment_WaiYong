@@ -32,7 +32,7 @@ def plot_image_dimension_distributions(df, dataset_type="train"):
         df (pd.DataFrame): DataFrame containing image dimensions.
         dataset_type (str): "train" or "test", for labeling the plots.
     """
-    plt.figure(figsize=(14, 6))
+    plt.figure(figsize=(10, 5))
 
     # Width distribution
     plt.subplot(1, 2, 1)
@@ -59,7 +59,7 @@ def plot_bounding_box_distributions(df, dataset_type="train"):
         df (pd.DataFrame): DataFrame containing bounding box stats.
         dataset_type (str): "train" or "test", for labeling the plots.
     """
-    plt.figure(figsize=(14, 6))
+    plt.figure(figsize=(10, 5))
 
     # Bounding box area distribution
     plt.subplot(1, 2, 1)
@@ -157,7 +157,7 @@ def plot_samples_with_bboxes(num_samples, annotations, class_names, cars_dir, da
         cars_dir (Path or str): Path to the directory containing images.
         dataset_type (str): "train" or "test", for labeling the dataset.
     """
-    plt.figure(figsize=(15, 10))  # Adjust figure size for clarity
+    plt.figure(figsize=(12, 5))  # Adjust figure size for clarity
     
     for i in range(num_samples):
         # Get annotation details
@@ -181,7 +181,127 @@ def plot_samples_with_bboxes(num_samples, annotations, class_names, cars_dir, da
             plt.imshow(img)
             plt.gca().add_patch(plt.Rectangle((x1, y1), x2 - x1, y2 - y1, 
                                               edgecolor='red', facecolor='none', linewidth=2))
-            plt.title(f"{dataset_type.capitalize()}: {car_name}", fontsize=10)
+            plt.title(f"{dataset_type.capitalize()}: {car_name}", fontsize=8)
+            plt.axis('off')
+    
+    plt.tight_layout()
+    plt.show()
+
+
+def parse_annotations_to_dataframe(annotations, class_names):
+    """
+    Parse annotations into a DataFrame and calculate class distribution.
+
+    Args:
+        annotations (list): List of annotations (train or test).
+        class_names (list): List of class names.
+
+    Returns:
+        pd.DataFrame: DataFrame with file names, bounding box info, class IDs, and class names.
+        pd.Series: Class distribution counts.
+    """
+    if annotations.size == 0:  # Check if annotations is empty
+        raise ValueError("Annotations array is empty.")
+
+    data = []
+    for anno in annotations:
+        try:
+            x1 = anno['bbox_x1'][0][0]
+            y1 = anno['bbox_y1'][0][0]
+            x2 = anno['bbox_x2'][0][0]
+            y2 = anno['bbox_y2'][0][0]
+            class_id = anno['class'][0][0]
+            file_name = anno['fname'][0]
+            data.append([file_name, x1, y1, x2, y2, class_id, class_names[class_id - 1]])
+        except Exception as e:
+            print(f"Error parsing annotation: {anno}. Skipping. Error: {e}")
+            continue
+
+    df = pd.DataFrame(data, columns=['file_name', 'x1', 'y1', 'x2', 'y2', 'class_id', 'class_name'])
+    class_counts = df['class_name'].value_counts()
+    return df, class_counts
+
+
+
+def plot_class_distribution(class_counts, dataset_type="train", save_path=None):
+    """
+    Plot class distribution as a bar chart.
+
+    Args:
+        class_counts (pd.Series): Class distribution counts.
+        dataset_type (str): "train" or "test", for labeling the dataset.
+        save_path (str, optional): Path to save the plot. If None, displays the plot.
+    """
+    if class_counts.empty:
+        raise ValueError("Class counts are empty. Cannot plot distribution.")
+
+    plt.figure(figsize=(10, 5))
+    class_counts.plot(kind='bar')
+    plt.title(f"Number of Images per Car Class ({dataset_type.capitalize()} Set)")
+    plt.xlabel("Car Class")
+    plt.ylabel("Number of Images")
+    plt.xticks([])
+    
+    if save_path:
+        plt.savefig(save_path)
+        print(f"Class distribution plot saved to {save_path}")
+    else:
+        plt.show()
+
+
+# Analyze and plot distribution for a given dataset
+def analyze_class_distribution(annotations, class_names, dataset_type):
+    """
+    Wrapper function to analyze class distribution and plot the results.
+
+    Args:
+        annotations (list): List of annotations (train or test).
+        class_names (list): List of class names.
+        dataset_type (str): Type of dataset ("train" or "test").
+    """
+    df, class_counts = parse_annotations_to_dataframe(annotations, class_names)
+    print(f"Top 5 {dataset_type.capitalize()} Classes and Frequency:")
+    print(class_counts.head(5))
+    print(f"Bottom 5 {dataset_type.capitalize()} Classes and Frequency:")
+    print(class_counts.tail(5))
+    plot_class_distribution(class_counts, dataset_type=dataset_type)
+
+
+def visualize_low_ratio_images(df, cars_dir, ratio_threshold=0.1, num_samples=5, dataset_type="train"):
+    """
+    Visualize images with bounding box-to-image area ratio below a given threshold.
+    
+    Args:
+        df (pd.DataFrame): DataFrame containing bounding box stats and area ratios.
+        cars_dir (Path or str): Directory containing images.
+        ratio_threshold (float): Threshold for bounding box area ratio.
+        num_samples (int): Number of samples to display.
+        dataset_type (str): "train" or "test", for labeling the dataset.
+    """
+    # Filter DataFrame for low area ratio
+    low_ratio_df = df[df['bbox_area_ratio'] < ratio_threshold]
+    
+    # Select a few samples randomly
+    sampled_rows = low_ratio_df.sample(min(num_samples, len(low_ratio_df)))
+    
+    plt.figure(figsize=(10, 5))  # Adjust figure size
+    
+    for idx, row in enumerate(sampled_rows.itertuples()):
+        # Load image
+        img_path = Path(cars_dir) / row.file_name
+        if not img_path.exists():
+            print(f"Warning: {row.file_name} does not exist in {cars_dir}. Skipping.")
+            continue
+        
+        with Image.open(img_path) as img:
+            # Plot image with bounding box
+            plt.subplot(1, num_samples, idx + 1)
+            plt.imshow(img)
+            plt.gca().add_patch(plt.Rectangle(
+                (row.x1, row.y1), row.bbox_width, row.bbox_height,
+                edgecolor='red', facecolor='none', linewidth=2
+            ))
+            plt.title(f"{dataset_type.capitalize()} Set\nBBox Ratio: {row.bbox_area_ratio:.2f}", fontsize=10)
             plt.axis('off')
     
     plt.tight_layout()

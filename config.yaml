@@ -1,0 +1,21 @@
+
+early_stopping:
+  min_delta: 0.01
+  patience: 3
+experiment:
+  experiment_name: ResNet18_Image_Classification
+  architecture_description: ResNet-18 with Classification Head 1 partial freeze
+  batch_size: 32
+  dropout: 0
+  learning_rate: 0.001
+  num_epochs: 50
+  weight_decay: 0
+  enable_plate_detection: True
+  use_augmentation: True
+save_paths:
+  class_names_file: data/artefacts/class_names.json
+  learning_curves: data/artefacts/learning_curves.png
+  model_save_path: models/final_model.pth
+  confusion_metrics_path: data/artefacts/test_confusion_matrix.csv
+  test_metrics_path: data/artefacts/test_classification_metrics.csv
+  

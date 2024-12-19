@@ -5,5 +5,7 @@ torchvision==0.20.1  # Match the version used in training
 Pillow==11.0.0 
 numpy==1.26.4
 slowapi==0.1.9
+opencv-python-headless
+pyyaml
 python-multipart
 ipywidgets

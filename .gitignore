@@ -1,9 +1,7 @@
 *.pth
 __pycache__/
 *.log
-*.png
 .DS_Store
 .vscode/
 .ipynb_checkpoints/
-.png
 data/raw/*

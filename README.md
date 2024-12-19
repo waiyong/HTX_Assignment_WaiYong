@@ -47,6 +47,7 @@ Classes: 196 distinct car models, ranging from sedans to SUVs, annotated with sp
 Image Resolution: High-resolution images, varying in size, with diverse backgrounds and lighting conditions.
 
 **Assumptions Made**
+
 Definition of "Car Type"
 The term "car type" in the requirements has been interpreted to mean the full car make, model, and year (e.g., "Audi TTS Coupe 2012") rather than broad categories like "sedan," "convertible," or "hatchback." This assumption was made based on the use of the Stanford Cars Dataset, which provides highly granular labels for specific car models
 

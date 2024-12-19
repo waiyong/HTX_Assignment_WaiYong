@@ -1,0 +1,11 @@
+# Configuration variables
+ENABLE_PLATE_DETECTION: True
+
+# Rate limits
+api_rate_limits:
+  ROOT_RATE_LIMIT: "10/minute"  # For root endpoint
+  PREDICT_RATE_LIMIT: "5/minute"  # For prediction endpoint
+
+# Model and class names paths
+MODEL_PATH: "/app/models/model.pth"
+CLASS_NAMES_PATH: "/app/class_names.json"

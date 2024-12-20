@@ -10,7 +10,7 @@ experiment:
   learning_rate: 0.001
   num_epochs: 50
   weight_decay: 0
-  enable_plate_detection: True
+  enable_plate_detection: False
   use_augmentation: True
 save_paths:
   class_names_file: data/artefacts/class_names.json

@@ -5,7 +5,11 @@
 
 In line with **HTX's mission to harness cutting-edge technologies for safeguarding Singapore**, this project delivers a **computer vision solution** to accurately classify vehicle types from images. Designed for **Home Team departments** such as the **Singapore Police Force** and the **Immigration and Checkpoints Authority**, it enhances surveillance, traffic management, and security operations.
 
-This solution will enhance real-time vehicle identification capabilities, improving surveillance and border control efficiency.
+**Assumptions Made**
+
+Definition of "Car Type"
+The term "car type" in the requirements has been interpreted to mean the full car make, model, and year (e.g., "Audi TTS Coupe 2012") rather than broad categories like "sedan," "convertible," or "hatchback." This assumption was made based on the use of the Stanford Cars Dataset, which provides highly granular labels for specific car models.
+
 ---
 
 ## Key Features
@@ -13,12 +17,6 @@ This solution will enhance real-time vehicle identification capabilities, improv
 - **High-Precision Classification**: Fine-tuned **ResNet-18** model trained on the **Stanford Cars Dataset** to distinguish 196 car models with high accuracy.  
 - **Real-Time API Integration**: FastAPI-based service enabling seamless integration for instantaneous vehicle identification.  
 - **Scalable and Secure Deployment**: Docker containerization ensures easy deployment, scalability, and security across operational environments.
-
----
-
-## Strategic Alignment
-
-This project supports **HTX's commitment** to advancing science and technology within the **Home Team**, enhancing situational awareness and operational efficiency to safeguard Singapore’s safety and security.
 
 ---
 
@@ -38,52 +36,54 @@ This project supports **HTX's commitment** to advancing science and technology w
 
 The project uses the **Stanford Cars Dataset**, which contains 16,185 images of 196 car classes. 
 
-Source: Kaggle - Stanford Cars Dataset
-Contents:
-Training Set: 8,144 images with annotations.
-Testing Set: 8,041 images with annotations.
-Metadata: Includes class names and bounding box coordinates for each image.
-Classes: 196 distinct car models, ranging from sedans to SUVs, annotated with specific makes and models.
-Image Resolution: High-resolution images, varying in size, with diverse backgrounds and lighting conditions.
+- Source: Kaggle - Stanford Cars Dataset
+- Contents:
+    - Training Set: 8,144 images with annotations.
+    - Testing Set: 8,041 images with annotations.
+- Metadata: Includes class names and bounding box coordinates for each image.
+- Classes: 196 distinct car models, ranging from sedans to SUVs, annotated with specific makes and models.
+- Image Resolution: High-resolution images, varying in size, with diverse backgrounds and lighting conditions.
 
-**Assumptions Made**
+- **stanford-cars-dataset folder:** [Stanford Cars Dataset Images](https://www.kaggle.com/datasets/jessicali9530/stanford-cars-dataset?resource=download)
 
-Definition of "Car Type"
-The term "car type" in the requirements has been interpreted to mean the full car make, model, and year (e.g., "Audi TTS Coupe 2012") rather than broad categories like "sedan," "convertible," or "hatchback." This assumption was made based on the use of the Stanford Cars Dataset, which provides highly granular labels for specific car models
+- **stanford-cars-dataset-meta folder:** [Stanford Cars Dataset Annotation](https://www.kaggle.com/code/subhangaupadhaya/pytorch-stanfordcars-classification/input?select=cars_test_annos_withlabels+%281%29.mat)
 
-- **Dataset Source (Images):** 
-[Stanford Cars Dataset Images](https://www.kaggle.com/datasets/jessicali9530/stanford-cars-dataset?resource=download)
-- **Dataset Source (Annotations):** [Stanford Cars Dataset Annotation] (https://www.kaggle.com/code/subhangaupadhaya/pytorch-stanfordcars-classification/input?select=cars_test_annos_withlabels+%281%29.mat)
+** When Downloading from the various sources, ensure that the files and folders follow exactly as the folder directory below**
 
+### Raw Data Directory Structure
 ```bash
 data/
 ├── raw/
 │   ├── stanford-cars-dataset/       # Raw images and annotations
-│   │   ├── cars_train/              # Training images
-│   │   ├── cars_test/               # Testing images
-│   │   ├── cars_annos.mat           # Original annotations for train/test
-│   ├── stanford-cars-dataset-meta/  # Additional metadata and outputs
-│   │   ├── cars_annos (2).mat       # Duplicate or additional annotation file
-│   │   ├── devout/                  # Development-related output files
-│   │   ├── cars_test_annos_withlabels.mat # Test annotations with labels
+│   │   ├── cars_train/cars_train/   # Training images
+│   │   ├── cars_test/cars_test/     # Testing images
+│   │   ├── cars_annos.mat           # Annotations for train/test
+│   ├── stanford-cars-dataset-meta/  
+│   │   ├── devkit/     
+│   │   ├── cars_annos (2).mat                  
+│   │   ├── cars_test_annos_withlabels (1).mat 
+│   │   ├──train_perfect_preds.txt
 ├── processed/
 │   ├── cropped_train/                # Cropped training images (generated by script)
 │   └── cropped_test/                 # Cropped test images (generated by script)
 ```
-## Directory Structure
+### Directory Structure
 ```bash
+## Directory Structure
+
+```plaintext
 project/
 ├── app/                                # API service code
 │   ├── app.py                          # FastAPI application
-│   ├── utils/                          # Utility functions
-│   │   ├── image_analysis.py               # Image Analysis utils
-│   │   ├── image_processing.py             # Image preprocessing utils
-│   │   └── model_training.py               # Model training utils 
+│   ├── config.yaml                     # Configuration file
+│   ├── utils.py                        # Utility functions module
+├── models/                             # Models directory
+│   ├── final_model.pth
 ├── data/                               # Dataset and related files
-│   ├── artefacts/                      # Model run output (e.g., logs, saved models)
-│   │   ├── class_names.json                # Trained model weights
-│   │   ├── learning_curves.png             # Learning curve visualization
-│   │   └── test_confusion_matrix.csv       # Confusion matrix data
+│   ├── artefacts/                      
+│   │   ├── class_names.json               
+│   │   ├── learning_curves.png             
+│   │   └── test_confusion_matrix.csv       
 │   ├── output/                         # Post-training analysis files
 │   ├── processed/                      # Cropped images after pre-processing
 │   │   ├── cropped_train/                  # Processed training images
@@ -91,29 +91,33 @@ project/
 │   ├── raw/                            # Raw Stanford Cars dataset and annotations
 │   │   ├── stanford-cars-dataset/          # Raw images
 │   │   ├── stanford-cars-dataset-meta/     # Raw annotation
-├── model_training_pipeline.ipynb       # Jupyter Notebooks for model training
-│   ├── train_model.ipynb               # Model training and evaluation
+├── model_training_pipeline.ipynb       # Jupyter Notebook for the model training pipeline
 ├── Dockerfile                          # Docker configuration
-├── requirements.yaml                    # Python dependencies
+├── environment.yaml                   # Python dependencies
+├── requirements.txt                  # Python dependencies for FastAPI
+├── config.yaml                        # Configuration file
 ├── README.md                           # This file
 └── .gitignore                          # Ignored files
+
 ```
 
 ## Setup and Installation
 
 1. Clone the repo
 ```bash
-    git clone <insert github link>
+    git clone <insert github link> <my-project>
 ```
 
-2. Install conda environment and navigate into the root folder.
+2. Navigate into the root folder and install conda environment and 
+
+```bash
+  cd my-project
+```
 
 ```bash
   conda env create -f environment.yml
 ```
-```bash
-  cd my-project
-```
+
 
 3. Check if Docker Is installed. Run the following command to check if Docker is installed. 
 
@@ -132,14 +136,14 @@ If the command fails, they need to start Docker. On macOS or Windows, this typic
 
 # Training the Model
 
-1. Ensure the dataset is in the correct directory structure (see Dataset).
-2. Run the Jupyter Notebook for training:
-3. jupyter notebook notebooks/train_model.ipynb
+1. **Ensure the dataset is in the correct directory structure (see Dataset above).**
+2. Run the Jupyter Notebook for training.
 4. Key steps in the notebook:
-    - Data loading and preprocessing
-    - Model fine-tuning with ResNet18
-    - Experiment tracking with MLflow
-    - Evaluation (confusion matrix, precision/recall)
+    - Introduction and Setup
+    - Exploratory Data Analysis
+    - Image Processing
+    - Model Training and Validation
+    - Results
 
 # Running the API
 
@@ -193,7 +197,8 @@ curl -X POST "http://localhost:8000/predict/" \
 
 # Results
 
-"Earlier experiments were conducted using a train-test split as the dataset sourced online had train and test set only. However, towards the end of the project duration, I realised this oversight, and I redid the data processing pipeline to use train-validation-test split. The final model used a proper train-validation-test split, ensuring more robust evaluation and generalization of the model's performance. The results in Table 2 reflect the most reliable metrics for comparison."
+- Earlier experiments were conducted using a train-test split as the dataset sourced online had train and test set only. However, towards the end of the project duration, I realised this oversight, and I redid the data processing pipeline to use train-validation-test split. 
+- The final model used a proper train-validation-test split, ensuring more robust evaluation and generalization of the model's performance. The results in Table 2 reflect the most reliable metrics for comparison.
 
 **Table 1: Results for experiments using train-test split**
     

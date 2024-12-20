@@ -25,7 +25,7 @@ def initialize_model(weights, dropout, class_names):
 
 
 
-def plot_learning_curves(train_losses, val_losses, train_accuracies, val_accuracies):
+def plot_learning_curves(train_losses, val_losses, train_accuracies, val_accuracies,learning_curves_path):
     """Plot training and validation loss and accuracy curves."""
     plt.figure(figsize=(12, 5))
     plt.subplot(1, 2, 1)
@@ -45,5 +45,5 @@ def plot_learning_curves(train_losses, val_losses, train_accuracies, val_accurac
     plt.legend()
 
     plt.savefig("learning_curves.png")
-    mlflow.log_artifact("learning_curves.png", artifact_path="plots")
+    mlflow.log_artifact(learning_curves_path, artifact_path="plots")
     plt.show()

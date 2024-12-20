@@ -301,5 +301,5 @@ The precision is very high for Audi TT RS, but the Recall is poor. The hypothesi
 Given more time, I would explore alternative methods such as: 
 - Using Deeper Architectures (ResNet 50)
 - Use techniques like Grad-CAM to understand which features the model is focusing on and refine the dataset or augmentations to include underrepresented aspects.
-- Explore augmenting the training set with more diverse images from varying angles and lighting conditions 
-    - Example: For the Audi TTS Coupe 2012 and Audi A5 Coup 2012, most of the images were taken from the front only.
+- Explore Hard sample mining to improve the performance of machine learning models by focusing training on the most challenging samples. 
+    - Updating dataset with more varied images for classes that are misclassified with high confidence.

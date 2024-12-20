@@ -1,6 +1,8 @@
 # Configuration variables
 ENABLE_PLATE_DETECTION: True
 
+MAX_FILE_SIZE_MB: 5
+
 # Rate limits
 api_rate_limits:
   ROOT_RATE_LIMIT: "10/minute"  # For root endpoint

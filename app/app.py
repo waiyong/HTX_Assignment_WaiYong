@@ -1,11 +1,11 @@
-from fastapi import FastAPI, Request, File, UploadFile
+from fastapi import FastAPI, Request, File, UploadFile, HTTPException
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from fastapi.responses import JSONResponse
 from utils import load_model, load_class_names, detect_and_blur_license_plate, preprocess_image, transform
 import numpy as np
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 import torch
 import yaml
 from pathlib import Path
@@ -19,6 +19,7 @@ PREDICT_RATE_LIMIT = config["api_rate_limits"]["PREDICT_RATE_LIMIT"]
 ENABLE_PLATE_DETECTION = config["ENABLE_PLATE_DETECTION"]
 CLASS_NAMES_PATH = config["CLASS_NAMES_PATH"]
 MODEL_PATH = config["MODEL_PATH"]
+MAX_FILE_SIZE_MB = config.get("MAX_FILE_SIZE_MB", 5)  # Default to 5 MB if not specified
 
 # Rate limiter setup
 limiter = Limiter(key_func=get_remote_address)
@@ -47,10 +48,29 @@ async def read_root(request: Request):
 @limiter.limit(PREDICT_RATE_LIMIT)
 async def predict(request: Request, file: UploadFile = File(...)):
     try:
+        # Validate file size
+        if file.size > MAX_FILE_SIZE_MB * 1024 * 1024:
+            raise HTTPException(
+                status_code=400,
+                detail=f"File size exceeds {MAX_FILE_SIZE_MB} MB limit."
+            )
+
+        # Validate image format
+        try:
+            image = Image.open(file.file)
+            image.verify()  # Verify image integrity
+        except UnidentifiedImageError:
+            raise HTTPException(
+                status_code=400,
+                detail="Uploaded file is not a valid image."
+            )
+        finally:
+            file.file.seek(0)  # Reset file pointer after verification
+
         # Read and preprocess image
         content = await file.read()
         image_np = preprocess_image(content)
-        
+
         # Blur license plates if enabled
         if ENABLE_PLATE_DETECTION:
             image_np = detect_and_blur_license_plate(image_np)
@@ -63,9 +83,11 @@ async def predict(request: Request, file: UploadFile = File(...)):
         with torch.no_grad():
             output = model(input_tensor)
             predicted_class = torch.argmax(output, dim=1).item()
-        
+
         predicted_class_name = class_names[predicted_class]
         return {"predicted_class": predicted_class_name}
 
+    except HTTPException as e:
+        raise e
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
